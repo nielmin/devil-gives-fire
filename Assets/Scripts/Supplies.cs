@@ -22,9 +22,9 @@ public class Supplies : MonoBehaviour
     }
     public void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Player")) {
-            p.GetLauncher().RefillCurAmmo();
-            Debug.Log(p.GetLauncher().GetCurAmmo());
-            Destroy(gameObject);
+            // p.GetLauncher().RefillCurAmmo();
+            // Debug.Log(p.GetLauncher().GetCurAmmo());
+            // Destroy(gameObject);
         }
     }  
 }

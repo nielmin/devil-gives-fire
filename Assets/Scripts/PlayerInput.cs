@@ -1,58 +1,82 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
     [SerializeField] DiscreteMovement controls;
     [SerializeField] Player p;
+    [SerializeField] SpriteRenderer pSprite;
+    [SerializeField] AnimationStateChanger changer;
 
-    void Awake()
+    [SerializeField] Launcher wand;
+
+    [SerializeField] BarFill mp;
+    [SerializeField] AudioSource audioSource;
+
+
+    public int direction = 0;
+
+    void Start()
     {
-        
+        mp.SetCurrent(wand.GetMaxAmmo());
     }
 
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            if (p.GetLauncher().GetCurAmmo() > 0) {
-                p.Shoot();
-                p.GetLauncher().currAmmo--;
-            } else {
-                Debug.Log("Out of Ammo");
-            }
+        if (p.PlayerHasBeenHit()) {
+            changer.ChangeAnimations("Player_Dies", false);
+            Debug.Log("Game Over");
         }
-        p.AimGun(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
     void FixedUpdate() {
         Vector3 movement = Vector3.zero;
-        if (Input.GetKey(KeyCode.W) || 
-        Input.GetKey(KeyCode.S) || 
-        Input.GetKey(KeyCode.A) || 
-        Input.GetKey(KeyCode.D)) {
 
+        mp.SetCurrent(wand.GetCurAmmo());
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) 
+        || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)) {
+            changer.ChangeAnimations("Player_Walk", false);
+
+        } else if (Input.GetKey(KeyCode.Z)) {
+            changer.ChangeAnimations("Player_Fire", true);
+            wand.Launch(direction);
+            audioSource.PlayOneShot(audioSource.clip);
+
+            if (wand.GetCurAmmo() > 0) {
+                mp.Subtract(1);
+                wand.Subtract();
+            }
+
+        } else if (!p.PlayerHasBeenHit()) {
+            changer.ChangeAnimations("Player_Idle", false);
         }
-        if (Input.GetKey(KeyCode.W)) {
+ 
+        if (Input.GetKey(KeyCode.UpArrow)) {
             movement += Vector3.up;
 
         }
-        if (Input.GetKey(KeyCode.S)) {
+        if (Input.GetKey(KeyCode.DownArrow)) {
             movement += Vector3.down;
         }
-        if (Input.GetKey(KeyCode.A)) {
-            movement += Vector3.left;            
-
+        if (Input.GetKey(KeyCode.LeftArrow)) {
+            movement += Vector3.left; 
+            direction = -1;
         }
-        if (Input.GetKey(KeyCode.D)) {
+        if (Input.GetKey(KeyCode.RightArrow)) {
             movement += Vector3.right;
+            direction = 1;
    
+        }    
+        pSprite.flipX = direction == -1;
+        if (movement != Vector3.zero) {
+            movement.Normalize();
         }
 
         controls.Movement(movement);
+        mp.SetCurrent(wand.currAmmo);
     }
 
     public Player GetPlayer() {
         return p;
     }
+
 }

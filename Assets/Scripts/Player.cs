@@ -1,44 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
-{
+{    
+    [SerializeField] Launcher wand;
+
+    public bool isHit = false;
+    public bool playerDead = false;
     public float speed = 5.0f;
-
-    [SerializeField] Launcher launcher;
-    [Header("Trackers")]
-    [SerializeField] Transform targetTransform;
-
-    void Start()
-    {
-        //stamina.SetStamina(currentStamina);
+    
+    void Update() {
+        if (playerDead) {
+            SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
+        }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //Debug.Log(currentStamina);
-        // AimGun(targetTransform);
-    }
-
     void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("Spawn")) {
-            //Debug.Log("Spawn");
+        if (other.CompareTag("Monster")) {
+            isHit = true;
+            Destroy(this.gameObject, 3f);
+            playerDead = true;
+
+        }
+        if (other.CompareTag("Supplies")) {
+            Debug.Log("Player picked up a potion");
+            wand.RefillCurAmmo();
+            Destroy(other.gameObject);
         }
     }
 
-    public void Shoot() {
-        launcher.Launch();
-    }
-    public void AimGun(Vector3 aimPos) {
-        transform.rotation = Quaternion.LookRotation(Vector3.forward, aimPos - transform.position);
-    }
-    public void AimGun(Transform targetTransform) {
-        AimGun(targetTransform.position);
-    }
-
-    public Launcher GetLauncher() {
-        return launcher;
+    public bool PlayerHasBeenHit() {
+        return isHit;
     }
 }
