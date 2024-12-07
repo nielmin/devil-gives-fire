@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class PlayerInput : MonoBehaviour
         if (p.PlayerHasBeenHit()) {
             changer.ChangeAnimations("Player_Dies", false);
             Debug.Log("Game Over");
+        }
+        if (p.PlayerDead()) {
+            SceneManager.LoadScene("GameOver");
         }
     }
     void FixedUpdate() {

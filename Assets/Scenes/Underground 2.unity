@@ -1983,7 +1983,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sm: {fileID: 1088972953}
-  SceneIndex: 1
+  SceneIndex: 6
 --- !u!1 &1088972952
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,15 +13,14 @@ public class Player : MonoBehaviour
     public float speed = 5.0f;
     
     void Update() {
-        if (playerDead) {
-            SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
-        }
+
     }
     void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Monster")) {
             isHit = true;
-            Destroy(this.gameObject, 3f);
             playerDead = true;
+            Destroy(this.gameObject, 3f);
+
 
         }
         if (other.CompareTag("Supplies")) {
@@ -33,5 +32,9 @@ public class Player : MonoBehaviour
 
     public bool PlayerHasBeenHit() {
         return isHit;
+    }
+
+    public bool PlayerDead() {
+        return playerDead;
     }
 }
